@@ -392,10 +392,10 @@
                         "value": "[variables('Azure').connectionName1]"
                     },
                     "LngAzure": {
-                        "value": "[resourceId('Microsoft.Resources/deployments','LNG-Azure-Static')]"
+                        "value": "[concat(parameters('Azure'),'-LNG-Static')]"
                     },
                     "LngOnprem": {
-                        "value": "[resourceId('Microsoft.Resources/deployments','LNG-Onprem1-Static')]"
+                        "value": "[concat(parameters('Onprem1'),'-LNG-Static')]"
                     }
                 }
             }
@@ -432,10 +432,10 @@
                         "value": "[variables('Azure').connectionName1]"
                     },
                     "LngAzure": {
-                        "value": "[resourceId('Microsoft.Resources/deployments','LNG-Azure-Static')]"
+                        "value": "[concat(parameters('Azure'),'-LNG-Static')]"
                     },
                     "LngOnprem": {
-                        "value": "[resourceId('Microsoft.Resources/deployments','LNG-Onprem2-Static')]"
+                        "value": "[concat(parameters('Onprem2'),'-LNG-Static')]]"
                     }
                 }
             }
