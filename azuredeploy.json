@@ -571,8 +571,8 @@
                     },
                     "localNetworkAddressSpace": {
                         "value": "[parameters('Azure').addressSpacePrefix]"
-                    }                 
-                 }
+                    }
+                }
             }
         },
         {
@@ -594,15 +594,7 @@
                         "value": "[reference(variables('OnPrem1').gatewayName).outputs.gWpublicIP.value]"
                     },
                     "localNetworkAddressSpace": {
-                        "value": [
-                            {
-                                "localNetworkAddressSpace": {
-                                    "addressPrefixes": [
-                                        "[parameters('Onprem1').addressSpacePrefix]"
-                                    ]
-                                }
-                            }
-                        ]
+                        "value": "[parameters('Azure').addressSpacePrefix]"
                     }
                 }
             }
@@ -626,15 +618,7 @@
                         "value": "[reference(variables('OnPrem2').gatewayName).outputs.gWpublicIP.value]"
                     },
                     "localNetworkAddressSpace": {
-                        "value": [
-                            {
-                                "localNetworkAddressSpace": {
-                                    "addressPrefixes": [
-                                        "[parameters('Onprem2').addressSpacePrefix]"
-                                    ]
-                                }
-                            }
-                        ]
+                        "value": "[parameters('Azure').addressSpacePrefix]"
                     }
                 }
             }
