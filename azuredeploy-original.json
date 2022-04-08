@@ -31,6 +31,21 @@
                 "false"
             ]
         },
+        "RoutingType": {
+            "type": "string",
+            "defaultValue": "Static",
+            "allowedValues": [
+                "Dynamic(BGP)",
+                "Static"
+            ]
+        },
+        "sharedKey": {
+            "type": "securestring",
+            "defaultValue": "P@assw@d",
+            "metadata": {
+                "description": "The shared key used to VPN tunnel between the two Azure and OnPrem VPN Gateways."
+            }
+        },
         "location": {
             "type": "string",
             "metadata": {
@@ -84,7 +99,9 @@
         "nsgtemplateURI": "[concat(uri(variables('artifactsLocation'),'nsg.json'))]",
         "onpremvnettemplateURI": "[concat(uri(variables('artifactsLocation'),'vnet-onprem.json'))]",
         "vpngwtemplateURI": "[concat(uri(variables('artifactsLocation'),'vpngw.json'))]",
-        "vmtemplateURI": "[concat(uri(variables('artifactsLocation'),'vm-nopip.json'))]",
+        "vpnconnURI": "[concat(uri(variables('artifactsLocation'),'vpnconnections2s.json'))]",
+        "vmtemplateURI": "[concat(uri(variables('artifactsLocation'),'vm.json'))]",
+        "lngtemplateURI": "[concat(uri(variables('artifactsLocation'),'localnetgw.json'))]",
         "enableBgp": "true",
         "Azure": {
             "subnetName": "subnet1",
@@ -345,6 +362,90 @@
             }
         },
         {
+            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
+            "name": "[concat('s2sconnection-',parameters('Azure').name,'-to-',parameters('Onprem1').name)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('OnPrem1').gatewayName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('Azure').gatewayName)]",
+                "[resourceId('Microsoft.Resources/deployments','lng-azure')]",
+                "[resourceId('Microsoft.Resources/deployments','lng-onprem1')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vpnconnURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "sharedKey": {
+                        "value": "[parameters('sharedKey')]"
+                    },
+                    "OnPremGatewayName": {
+                        "value": "[variables('OnPrem1').gatewayName]"
+                    },
+                    "OnPremConnectionName": {
+                        "value": "[variables('OnPrem1').connectionName]"
+                    },
+                    "AzureGatewayName": {
+                        "value": "[variables('Azure').gatewayName]"
+                    },
+                    "AzureConnectionName": {
+                        "value": "[variables('Azure').connectionName1]"
+                    },
+                    "LngAzure": {
+                        "value": "[concat(parameters('Azure').name,'-lng-static')]"
+                    },
+                    "LngOnprem": {
+                        "value": "[concat(parameters('Onprem1').name,'-lng-static')]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
+            "name": "[concat('s2sconnection-',parameters('Azure').name,'-to-',parameters('Onprem2').name)]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', variables('OnPrem2').gatewayName)]",
+                "[resourceId('Microsoft.Resources/deployments', variables('Azure').gatewayName)]",
+                "[resourceId('Microsoft.Resources/deployments','lng-azure')]",
+                "[resourceId('Microsoft.Resources/deployments','lng-onprem1')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('vpnconnURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "sharedKey": {
+                        "value": "[parameters('sharedKey')]"
+                    },
+                    "OnPremGatewayName": {
+                        "value": "[variables('OnPrem2').gatewayName]"
+                    },
+                    "OnPremConnectionName": {
+                        "value": "[variables('OnPrem2').connectionName]"
+                    },
+                    "AzureGatewayName": {
+                        "value": "[variables('Azure').gatewayName]"
+                    },
+                    "AzureConnectionName": {
+                        "value": "[variables('Azure').connectionName1]"
+                    },
+                    "LngAzure": {
+                        "value": "[concat(parameters('Azure').name,'-lng-static')]"
+                    },
+                    "LngOnprem": {
+                        "value": "[concat(parameters('Onprem2').name,'-lng-static')]"
+                    }
+                }
+            }
+        },
+        {
             "name": "[concat(parameters('Azure').name,'-vm')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
@@ -447,6 +548,78 @@
                     },
                     "location": {
                         "value": "[parameters('location')]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
+            "name": "lng-azure",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('lngtemplateURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[concat(parameters('Azure').name,'-lng-static')]"
+                    },
+                    "gatewayIpAddress": {
+                        "value": "[reference(variables('Azure').gatewayName).outputs.gWpublicIP.value]"
+                    },
+                    "localNetworkAddressSpace": {
+                        "value": "[parameters('Azure').lngNatAddressSpacePrefix]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
+            "name": "lng-onprem1",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('lngtemplateURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[concat(parameters('Onprem1').name,'-lng-static')]"
+                    },
+                    "gatewayIpAddress": {
+                        "value": "[reference(variables('OnPrem1').gatewayName).outputs.gWpublicIP.value]"
+                    },
+                    "localNetworkAddressSpace": {
+                        "value": "[parameters('Azure').addressSpacePrefix]"
+                    }
+                }
+            }
+        },
+        {
+            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
+            "name": "lng-onprem2",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('lngtemplateURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[concat(parameters('Onprem2').name,'-lng-static')]"
+                    },
+                    "gatewayIpAddress": {
+                        "value": "[reference(variables('OnPrem2').gatewayName).outputs.gWpublicIP.value]"
+                    },
+                    "localNetworkAddressSpace": {
+                        "value": "[parameters('Azure').addressSpacePrefix]"
                     }
                 }
             }
