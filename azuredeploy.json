@@ -548,7 +548,7 @@
             }
         },
         {
-            "name": "LNG-Azure-Static",
+            "name": "lng-azure-static",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "properties": {
@@ -559,7 +559,7 @@
                 },
                 "parameters": {
                     "name": {
-                        "value": "[concat(parameters('Azure'),'-LNG-Static')]"
+                        "value": "[concat(parameters('Azure'),'-lng-static')]"
                     },
                     "gatewayIpAddress": {
                         "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('Azure').gatewayName)).outputs.publicIP.value]"
@@ -579,7 +579,7 @@
             }
         },
         {
-            "name": "LNG-Onprem1-Static",
+            "name": "lng-onprem1-static",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "properties": {
@@ -590,7 +590,7 @@
                 },
                 "parameters": {
                     "name": {
-                        "value": "[concat(parameters('Onprem1'),'-LNG-Static')]"
+                        "value": "[concat(parameters('Onprem1'),'-lng-static')]"
                     },
                     "gatewayIpAddress": {
                         "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('OnPrem1').gatewayName)).outputs.publicIP.value]"
@@ -610,7 +610,7 @@
             }
         },
         {
-            "name": "LNG-Onprem2-Static",
+            "name": "lng-onprem2-static",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "properties": {
