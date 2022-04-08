@@ -567,7 +567,7 @@
                         "value": "[concat(parameters('Azure'),'-lng-static')]"
                     },
                     "gatewayIpAddress": {
-                        "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('Azure').gatewayName)).outputs.GWpublicIP.value]"
+                        "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('Azure').gatewayName)).outputs.gWpublicIP.value]"
                     },
                     "localNetworkAddressSpace": {
                         "value": [
@@ -599,7 +599,7 @@
                         "value": "[concat(parameters('Onprem1'),'-lng-static')]"
                     },
                     "gatewayIpAddress": {
-                        "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('OnPrem1').gatewayName)).outputs.GWpublicIP.value]"
+                        "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('OnPrem1').gatewayName)).outputs.gWpublicIP.value]"
                     },
                     "localNetworkAddressSpace": {
                         "value": [
@@ -631,7 +631,7 @@
                         "value": "[concat(parameters('Onprem2'),'-LNG-Static')]"
                     },
                     "gatewayIpAddress": {
-                        "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('OnPrem2').gatewayName)).outputs.GWpublicIP.value]"
+                        "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('OnPrem2').gatewayName)).outputs.gWpublicIP.value]"
                     },
                     "localNetworkAddressSpace": {
                         "value": [
