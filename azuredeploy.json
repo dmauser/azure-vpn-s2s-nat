@@ -8,16 +8,9 @@
         "VmAdminPassword": {
             "type": "secureString"
         },
-        "Restrict_SSH_VM_AccessByPublicIP": {
-            "type": "string",
-            "defaultValue": "*",
-            "metadata": {
-                "description": "The default is to allow SSH access from any source Public IP (*). To restric access it, please specify your Public IP address with CIDR. For single IP add 1.1.1.1/32."
-            }
-        },
         "deployHubVPNGateway": {
             "type": "string",
-            "defaultValue": "false",
+            "defaultValue": "true",
             "allowedValues": [
                 "true",
                 "false"
@@ -25,7 +18,7 @@
         },
         "deployOnpremisesVPNGateway": {
             "type": "string",
-            "defaultValue": "false",
+            "defaultValue": "true",
             "allowedValues": [
                 "true",
                 "false"
@@ -81,7 +74,7 @@
     "variables": {
         "nsgname": "Default-NSG",
         "artifactsLocation": "https://raw.githubusercontent.com/dmauser/azure-hub-spoke-base-lab/main/linked/",
-        "nsgtemplateURI": "[concat(uri(variables('artifactsLocation'),'nsg.json'))]",
+        "nsgtemplateURI": "[concat(uri(variables('artifactsLocation'),'nsg-default.json'))]",
         "onpremvnettemplateURI": "[concat(uri(variables('artifactsLocation'),'vnet-onprem.json'))]",
         "vpngwtemplateURI": "[concat(uri(variables('artifactsLocation'),'vpngw.json'))]",
         "vmtemplateURI": "[concat(uri(variables('artifactsLocation'),'vm-nopip.json'))]",
@@ -120,9 +113,6 @@
                 "parameters": {
                     "networkSecurityGroupName": {
                         "value": "[variables('nsgname')]"
-                    },
-                    "RestrictSshAccessByPublicIP": {
-                        "value": "[parameters('Restrict_SSH_VM_AccessByPublicIP')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
