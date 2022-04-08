@@ -564,23 +564,15 @@
                 },
                 "parameters": {
                     "name": {
-                        "value": "[concat(parameters('Azure'),'-lng-static')]"
+                        "value": "[concat(parameters('Azure').name,'-lng-static')]"
                     },
                     "gatewayIpAddress": {
-                        "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('Azure').gatewayName)).outputs.gWpublicIP.value]"
+                        "value": "[reference(variables('Azure').gatewayName).outputs.gWpublicIP.value]"
                     },
                     "localNetworkAddressSpace": {
-                        "value": [
-                            {
-                                "localNetworkAddressSpace": {
-                                    "addressPrefixes": [
-                                        "[parameters('Azure').addressSpacePrefix]"
-                                    ]
-                                }
-                            }
-                        ]
-                    }
-                }
+                        "value": "[parameters('Azure').addressSpacePrefix]"
+                    }                 
+                 }
             }
         },
         {
@@ -596,10 +588,10 @@
                 },
                 "parameters": {
                     "name": {
-                        "value": "[concat(parameters('Onprem1'),'-lng-static')]"
+                        "value": "[concat(parameters('Onprem1').name,'-lng-static')]"
                     },
                     "gatewayIpAddress": {
-                        "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('OnPrem1').gatewayName)).outputs.gWpublicIP.value]"
+                        "value": "[reference(variables('OnPrem1').gatewayName).outputs.gWpublicIP.value]"
                     },
                     "localNetworkAddressSpace": {
                         "value": [
@@ -628,10 +620,10 @@
                 },
                 "parameters": {
                     "name": {
-                        "value": "[concat(parameters('Onprem2'),'-LNG-Static')]"
+                        "value": "[concat(parameters('Onprem2').name,'-LNG-Static')]"
                     },
                     "gatewayIpAddress": {
-                        "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('OnPrem2').gatewayName)).outputs.gWpublicIP.value]"
+                        "value": "[reference(variables('OnPrem2').gatewayName).outputs.gWpublicIP.value]"
                     },
                     "localNetworkAddressSpace": {
                         "value": [
