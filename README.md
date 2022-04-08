@@ -11,6 +11,9 @@ This lab deploys Azure side and two branches using the same configuration stated
 
 ## Deploy Lab
 
+[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fazure-vpn-s2s-nat%2Fmain%2Fazuredeploy.json)
+[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fazure-vpn-s2s-nat%2Fmain%2Fazuredeploy.json)
+
 The lab takes about 15 minutes to get provisioned. That may vary depending on the region you are provisioning. 
 
 ## Scenario 1: Static NAT (Static Routing)
