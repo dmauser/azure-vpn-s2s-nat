@@ -303,7 +303,7 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem1').name,'-vnet'))]"
+                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem2').name,'-vnet'))]"
             ],
             "properties": {
                 "mode": "Incremental",
