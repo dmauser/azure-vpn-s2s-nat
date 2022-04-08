@@ -553,7 +553,7 @@
         },
         {
             "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
-            "name": "lng-azure-static",
+            "name": "lng-azure",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "properties": {
@@ -577,7 +577,7 @@
         },
         {
             "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
-            "name": "lng-onprem1-static",
+            "name": "lng-onprem1",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "properties": {
@@ -609,7 +609,7 @@
         },
         {
             "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
-            "name": "lng-onprem2-static",
+            "name": "lng-onprem2",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "properties": {
