@@ -567,7 +567,7 @@
                         "value": "[concat(parameters('Azure'),'-lng-static')]"
                     },
                     "gatewayIpAddress": {
-                        "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('Azure').gatewayName)).outputs.bgpSettings.value[0].bgpPeeringAddresses.tunnelIpAddresses]"
+                        "value": "[reference(resourceId('Microsoft.Resources/deployments', variables('Azure').gatewayName)).outputs.ipAddress.value]"
                     },
                     "localNetworkAddressSpace": {
                         "value": [
