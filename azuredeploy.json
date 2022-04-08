@@ -190,6 +190,40 @@
             }
         },
         {
+            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
+            "name": "[concat(parameters('Onprem2').name,'-vnet')]",
+            "type": "Microsoft.Resources/deployments",
+            "apiVersion": "2020-10-01",
+            "dependsOn": [
+                "[resourceId('Microsoft.Resources/deployments', 'NSG')]"
+            ],
+            "properties": {
+                "mode": "Incremental",
+                "templateLink": {
+                    "uri": "[variables('onpremvnettemplateURI')]",
+                    "contentVersion": "1.0.0.0"
+                },
+                "parameters": {
+                    "name": {
+                        "value": "[parameters('Onprem2').name]"
+                    },
+                    "addressSpacePrefix": {
+                        "value": "[parameters('Onprem2').addressSpacePrefix]"
+                    },
+                    "subnetName": {
+                        "value": "[variables('OnPrem2').subnetName]"
+                    },
+                    "subnetPrefix": {
+                        "value": "[parameters('Onprem2').subnet1Prefix]"
+                    },
+                    "gatewaySubnetPrefix": {
+                        "value": "[parameters('Onprem2').gatewaySubnetPrefix]"
+                    }
+                }
+
+            }
+        },
+        {
             "condition": "[equals(parameters('deployHubVPNGateway'),'true')]",
             "name": "[variables('Azure').gatewayName]",
             "type": "Microsoft.Resources/deployments",
@@ -226,40 +260,7 @@
 
             }
         },
-        {
-            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
-            "name": "[concat(parameters('Onprem2').name,'-vnet')]",
-            "type": "Microsoft.Resources/deployments",
-            "apiVersion": "2020-10-01",
-            "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', 'NSG')]"
-            ],
-            "properties": {
-                "mode": "Incremental",
-                "templateLink": {
-                    "uri": "[variables('onpremvnettemplateURI')]",
-                    "contentVersion": "1.0.0.0"
-                },
-                "parameters": {
-                    "name": {
-                        "value": "[parameters('Onprem2').name]"
-                    },
-                    "addressSpacePrefix": {
-                        "value": "[parameters('Onprem2').addressSpacePrefix]"
-                    },
-                    "subnetName": {
-                        "value": "[variables('OnPrem2').subnetName]"
-                    },
-                    "subnetPrefix": {
-                        "value": "[parameters('Onprem2').subnet1Prefix]"
-                    },
-                    "gatewaySubnetPrefix": {
-                        "value": "[parameters('Onprem2').gatewaySubnetPrefix]"
-                    }
-                }
 
-            }
-        },
         {
             "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
             "name": "[variables('OnPrem1').gatewayName]",
