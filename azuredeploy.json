@@ -72,7 +72,7 @@
         }
     },
     "variables": {
-        "nsgname": "Default-NSG",
+        "nsgname": "nsg-default",
         "artifactsLocation": "https://raw.githubusercontent.com/dmauser/azure-hub-spoke-base-lab/main/linked/",
         "nsgtemplateURI": "[concat(uri(variables('artifactsLocation'),'nsg-default.json'))]",
         "onpremvnettemplateURI": "[concat(uri(variables('artifactsLocation'),'vnet-onprem.json'))]",
@@ -375,7 +375,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem1').name,'-vnet'))]"
+                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem1').name,'-vnet'))]",
+                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Azure').name,'-vm'))]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -411,7 +412,8 @@
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem2').name,'-vnet'))]"
+                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem2').name,'-vnet'))]",
+                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem1').name,'-vm'))]"
             ],
             "properties": {
                 "mode": "Incremental",
