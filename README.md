@@ -4,6 +4,10 @@
 
 This Lab helps you deploy configure NAT by using the same scenario covered over the official article [How to configure NAT on Azure VPN Gateways](https://docs.microsoft.com/en-us/azure/vpn-gateway/nat-howto). Please, review that article to get a good understanding of the scenario and use this lab to practice on a real lab environment.
 
+Here is the network topology used in this lab:
+
+![Network Diagram](./media/network-diagram.png)
+
 ## Components
 
 This lab deploys Azure side and two branches using the same configuration stated on the official article but include also few VMs to test the connectivity.
@@ -12,14 +16,17 @@ This lab deploys Azure side and two branches using the same configuration stated
     - azure-vnet - Address space 10.0.1.0/24
     - azure-lxvm - Linux virtual machine
     - azure-vpngw - Azure VPN Gateway using VpnGw2 SKU (required to use NAT feature)
+    - NAT address - 100.0.1.0/24
 - **Branch1**
     - branch1-vnet - Address space 10.0.1.0/24
     - branch1-lxvm - Linux virtual machine
-    - branch1-vpngw - Azure VPN Gateway using VpnGw1 SKU 
+    - branch1-vpngw - Azure VPN Gateway using VpnGw1 SKU
+    - NAT address - 100.0.2.0/24
 - **Branch2**
     - branch2-vnet - Address space 10.0.1.0/24
     - branch2-lxvm - Linux virtual machine
-    - branch1-vpngw - Azure VPN Gateway using VpnGw1 SKU 
+    - branch1-vpngw - Azure VPN Gateway using VpnGw1 SKU
+    - NAT address - 100.0.2.0/24
 
 - Note: all the VMs do not have Public IP but you can access them using serial console.
 
