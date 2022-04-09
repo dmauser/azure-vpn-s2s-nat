@@ -41,6 +41,8 @@ The lab takes between 15-25 minutes to get provisioned.
 
 #### Prerequisites
 
+All commands below have to be executed over Bash on Linux with Azure CLI or [Cloud Shell Bash](http://shell.azure.com/).
+
 ```bash
 az login
 #List all your subscriptions
