@@ -2,7 +2,7 @@
 
 ## Intro
 
-This Lab helps you deploy configure NAT by using the same scenario covered over the official article [How to configure NAT on Azure VPN Gateways](https://docs.microsoft.com/en-us/azure/vpn-gateway/nat-howto). Please, review that article to get a good understanding of the scenario and use this lab to practice on a real lab environment.
+This Lab helps you deploy configure NAT by using the same scenario covered over the official article [How to configure NAT on Azure VPN Gateways](https://docs.microsoft.com/en-us/azure/vpn-gateway/nat-howto). Please, review that article to get a good understanding of the scenario and use this lab to practice.
 
 Here is the network topology used in this lab:
 
