@@ -31,7 +31,6 @@
             },
             "defaultValue": "[resourceGroup().location]"
         },
-
         "Azure": {
             "type": "object",
             "defaultValue": {

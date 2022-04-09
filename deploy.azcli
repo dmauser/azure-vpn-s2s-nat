@@ -1,40 +1,4 @@
-# NAT on Azure VPN Gateways (Lab)
-
-## Intro
-
-This Lab helps you deploy configure NAT by using the same scenario covered over the official article [How to configure NAT on Azure VPN Gateways](https://docs.microsoft.com/en-us/azure/vpn-gateway/nat-howto). Please, review that article to get a good understanding of the scenario and use this lab to practice on a real lab environment.
-
-## Components
-
-This lab deploys Azure side and two branches using the same configuration stated on the official article but include also few VMs to test the connectivity.
-
-- **Azure** 
-    - azure-vnet - Address space 10.0.1.0/24
-    - azure-lxvm - Linux virtual machine
-    - azure-vpngw - Azure VPN Gateway using VpnGw2 SKU (required to use NAT feature)
-- **Branch1**
-    - branch1-vnet - Address space 10.0.1.0/24
-    - branch1-lxvm - Linux virtual machine
-    - branch1-vpngw - Azure VPN Gateway using VpnGw1 SKU 
-- **Branch2**
-    - branch2-vnet - Address space 10.0.1.0/24
-    - branch2-lxvm - Linux virtual machine
-    - branch1-vpngw - Azure VPN Gateway using VpnGw1 SKU 
-
-- Note: all the VMs do not have Public IP but you can access them using serial console.
-
-## Deploy Lab
-
-[![Deploy To Azure](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/deploytoazure.svg?sanitize=true)](https://portal.azure.com/#create/Microsoft.Template/uri/https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fazure-vpn-s2s-nat%2Fmain%2Fazuredeploy.json)
-[![Visualize](https://raw.githubusercontent.com/Azure/azure-quickstart-templates/master/1-CONTRIBUTION-GUIDE/images/visualizebutton.svg?sanitize=true)](http://armviz.io/#/?load=https%3A%2F%2Fraw.githubusercontent.com%2Fdmauser%2Fazure-vpn-s2s-nat%2Fmain%2Fazuredeploy.json)
-
-The lab takes between 15-25 minutes to get provisioned.
-
-### Scenario 1: Static NAT and S2S using static routing
-
-#### Prerequisites
-
-```bash
+### AZ CLI 
 az login
 #List all your subscriptions
 az account list -o table --query "[].{Name:name, IsDefault:isDefault}"
@@ -56,11 +20,8 @@ branch1vnetrange=$(az network vnet show -n branch1-vnet -g $rg --query addressSp
 branch2vnetrange=$(az network vnet show -n branch2-vnet -g $rg --query addressSpace.addressPrefixes[0] -o tsv)
 location=$(az group show -g $rg --query location  -o tsv)
 sharedkey=$(openssl rand -base64 24)
-```
 
-#### Create Local Network Gateways
-
-```bash
+##Create Local Network Gateways
 #Azure
 az network local-gateway create \
 --gateway-ip-address $(az network public-ip show --name azure-vpngw-pip1 --resource-group $rg -o tsv --query "ipAddress" -o tsv) \
@@ -84,17 +45,8 @@ az network local-gateway create \
 --resource-group $rg \
 --local-address-prefixes $branch2vnetrange \
 --output none
-```
 
-Review all three Local Network Gateways. For this solution both Branch1 and Branch2 use 10.0.1.0/24 while Azure uses 100.0.1.0/24 (NAT address). Branches need to see Azure as different address space because they are not using any NAT rule. NAT rules Ingress and Egress are configured on Azure side only:
-
-![Local Network Gateways](./media/lng-static.png)
-
-#### Create NAT Rules
-
-You will see below that NAT rules are only associated to the azure-vpngw side.
-
-```bash
+#NAT Rules
 #Egress NAT Rule from Azure to Branches
 az network vnet-gateway nat-rule add \
 --name azure \
@@ -127,15 +79,8 @@ az network vnet-gateway nat-rule add \
 --gateway-name azure-vpngw \
 --resource-group $rg \
 --output none
-```
 
-You can review the generated NAT rules over the Portal by accessing azure-vpngw blade and go to NAT Rules. You should have the following rules listed there:
-
-![NAT Rules](./media/nat-rules-azure-vpngw.png)
-
-#### Create VPN connections
-
-```bash
+##Create VPN connections
 #Parse NAT rules as variables
 natazure=$(az network vnet-gateway nat-rule list -g $rg --gateway-name azure-vpngw --query "[?name=='azure'].{id:id}" -o tsv)
 natbranch1=$(az network vnet-gateway nat-rule list -g $rg --gateway-name azure-vpngw --query "[?name=='branch1'].{id:id}" -o tsv)
@@ -185,29 +130,11 @@ az network vpn-connection create \
 --shared-key $sharedkey \
 --local-gateway2 azure-lng-static \
 --output none
-```
 
-#### Connectivity test
-
-- Step 1: Open serial console on azure-lxvm, branch1-lxvm and branch2-lxvm
-
-- Step 2: On the branch1-lxvm and branch2-lxvm leave the following command running:
-```bash
+# Connectivity test
+# Open serial console on azure-lxvm, branch1-lxvm and branch2-lxvm
+# On branch1-lxvm and branch2-lxvm leave the following command running:
 sudo tcpdump -ni any icmp
-```
-- Step 3: On the azure-lxvm run the following commands:
-```bash
+# On azure-lxvm run the following commands:
 ping 100.0.2.4 -O -c 5
 ping 100.0.3.4 -O -c 5
-```
-- Expected outputs:
-    - azure-lxvm:
-    ![](./media/output-azure-vmlx.png)
-    - branch1-lxvm:
-    ![](/media/output-branch1-lxvm.png)
-    - branch2-lxvm:
-    ![](/media/output-branch2-lxvm.png)
-
-### Scenario 2: Static NAT and S2S using dynamic (BGP) routing
-
-Coming soon.
