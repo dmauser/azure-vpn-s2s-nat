@@ -28,7 +28,12 @@ This lab deploys Azure side and two branches using the same configuration stated
     - branch1-vpngw - Azure VPN Gateway using VpnGw1 SKU
     - NAT address - 100.0.2.0/24
 
-- Note: all the VMs do not have Public IP but you can access them using serial console.
+## Considerations
+
+- All three environments use the same IP address space 10.0.1.0/24 to simulate overlapping IP address
+- Branches are emulated in Azure using VPN Gateway (you can replace with a NVA). Although documentations states  that VNet-to-Vnet connection type is not supported in this scenarios we are using Site-to-Site together with Local Network Gateways and that is a supported scenario.
+- All the VMs do not have Public IP but you can access them using [Serial Console](https://docs.microsoft.com/en-us/troubleshoot/azure/virtual-machines/serial-console-overview).
+- This lab uses Static NAT and IPSec with static routing.
 
 ## Deploy Lab
 
@@ -37,9 +42,7 @@ This lab deploys Azure side and two branches using the same configuration stated
 
 The lab takes between 15-25 minutes to get provisioned.
 
-### Scenario 1: Static NAT and S2S using static routing
-
-#### Prerequisites
+### Prerequisites
 
 All commands below have to be executed over Bash on Linux with Azure CLI or [Cloud Shell Bash](http://shell.azure.com/).
 
@@ -52,7 +55,13 @@ az account list --query "[?isDefault == \`true\`].{Name:name, IsDefault:isDefaul
 
 # In case you want to do it separated Subscription change your active subscription as shown
 az account set --subscription <Add here SubID or Name> #Add your Subscription ID or Name
+```
 
+### Lab steps
+
+Set parameters on the first section below in case you are using a different resource group and you want to change the NAT addresses.
+
+```bash
 #Parameters (change based based on your needs)
 rg=vnet-nat #Set the resource group where your lab got deployed
 azurenatrange='100.0.1.0/24' #NAT range used by Azure
@@ -175,7 +184,7 @@ az network vpn-connection create \
 --egress-nat-rule $natazure \
 --output none
 
-# Branch 1 to Azure
+# Branch1 to Azure
 az network vpn-connection create \
 --name branch1-to-azure \
 --resource-group $rg \
@@ -185,7 +194,7 @@ az network vpn-connection create \
 --local-gateway2 azure-lng-static \
 --output none
 
-# Branch 2 to Azure
+# Branch2 to Azure
 az network vpn-connection create \
 --name branch2-to-azure \
 --resource-group $rg \
@@ -217,6 +226,3 @@ ping 100.0.3.4 -O -c 5
     - branch2-lxvm:
     ![](/media/output-branch2-lxvm.png)
 
-### Scenario 2: Static NAT and S2S using dynamic (BGP) routing
-
-Coming soon.
