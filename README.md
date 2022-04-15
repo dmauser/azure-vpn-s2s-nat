@@ -30,9 +30,10 @@ This lab deploys Azure side and two branches using the same configuration stated
 
 ## Considerations
 
-- All three environments use the same IP address space 10.0.1.0/24 to simulate overlapping IP address
-- Branches are emulated in Azure using VPN Gateway (you can replace with a NVA). Although documentations states  that VNet-to-Vnet connection type is not supported in this scenarios we are using Site-to-Site together with Local Network Gateways and that is a supported scenario.
-- All the VMs do not have Public IP but you can access them using [Serial Console](https://docs.microsoft.com/en-us/troubleshoot/azure/virtual-machines/serial-console-overview).
+- All three environments use the same IP address space 10.0.1.0/24 to simulate overlapping IP address use cases.
+- Both branches have VPN Gateways (you can replace them with NVAs). Although the documentation states that the VNet-to-Vnet connection type is not a supported configuration, in this scenario we are using Site-to-Site together with Local Network Gateways, and that is a supported scenario for NAT between VPN Gateways.
+- All the VMs do not have Public IPs, but you can access them using [Serial Console](https://docs.microsoft.com/en-us/troubleshoot/azure/virtual-machines/serial-console-overview).
+- This lab uses Site-to-Site IPsec VPN connections with static routing.
 - This lab uses Static NAT and IPSec with static routing.
 
 ## Deploy Lab
