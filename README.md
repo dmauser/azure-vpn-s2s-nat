@@ -1,4 +1,4 @@
-# NAT on Azure VPN Gateways (Lab)
+# Static NAT on Azure VPN Gateways (Lab)
 
 ## Intro
 
