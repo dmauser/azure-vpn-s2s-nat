@@ -72,7 +72,7 @@
     },
     "variables": {
         "nsgname": "nsg-default",
-        "artifactsLocation": "https://raw.githubusercontent.com/dmauser/azure-hub-spoke-base-lab/main/linked/",
+        "artifactsLocation": "https://raw.githubusercontent.com/dmauser/azure-vpn-s2s-nat/main/linked/",
         "nsgtemplateURI": "[concat(uri(variables('artifactsLocation'),'nsg-default.json'))]",
         "onpremvnettemplateURI": "[concat(uri(variables('artifactsLocation'),'vnet-onprem.json'))]",
         "vpngwtemplateURI": "[concat(uri(variables('artifactsLocation'),'vpngw.json'))]",
