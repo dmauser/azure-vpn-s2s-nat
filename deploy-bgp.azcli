@@ -1,0 +1,178 @@
+### AZ CLI 
+az login
+#List all your subscriptions
+az account list -o table --query "[].{Name:name, IsDefault:isDefault}"
+#List default Subscription being used
+az account list --query "[?isDefault == \`true\`].{Name:name, IsDefault:isDefault}" -o table
+
+# In case you want to do it separated Subscription change your active subscription as shown
+az account set --subscription <Add here SubID or Name> #Add your Subscription ID or Name
+
+#Parameters (change based based on your needs)
+rg=lab-vpn-natbgp #Set the resource group where your lab got deployed
+az1natrange='100.0.1.0/24' #NAT range used by az1
+az2natrange='100.0.2.0/24' #NAT range used by az2
+az3natrange='100.0.3.0/24' #NAT range used by az3
+
+#Variables
+az1vnetrange=$(az network vnet show -n az1-vnet -g $rg --query addressSpace.addressPrefixes[0] -o tsv)
+az2vnetrange=$(az network vnet show -n az2-vnet -g $rg --query addressSpace.addressPrefixes[0] -o tsv)
+az3vnetrange=$(az network vnet show -n az3-vnet -g $rg --query addressSpace.addressPrefixes[0] -o tsv)
+location=$(az group show -g $rg --query location  -o tsv)
+sharedkey=$(openssl rand -base64 24)
+
+## Validate VPN Gateways Provisioning
+
+
+##Create Local Network Gateways
+az1gwbgp=$(az network vnet-gateway show -n az1-vpngw -g $rg --query 'bgpSettings.bgpPeeringAddresses[0].defaultBgpIpAddresses[0]' -o tsv)
+az2gwbgp=$(az network vnet-gateway show -n az2-vpngw -g $rg --query 'bgpSettings.bgpPeeringAddresses[0].defaultBgpIpAddresses[0]' -o tsv)
+az3gwbgp=$(az network vnet-gateway show -n az3-vpngw -g $rg --query 'bgpSettings.bgpPeeringAddresses[0].defaultBgpIpAddresses[0]' -o tsv)
+
+
+#az1bgp
+az network local-gateway create \
+--gateway-ip-address $(az network public-ip show --name az1-vpngw-pip1 --resource-group $rg -o tsv --query "ipAddress" -o tsv) \
+--name az1-lng-bgp \
+--resource-group $rg \
+--bgp-peering-address $az1gwbgp \
+--asn 65001 \
+--output none
+
+#az2bgp
+az network local-gateway create \
+--gateway-ip-address $(az network public-ip show --name az2-vpngw-pip1 --resource-group $rg -o tsv --query "ipAddress" -o tsv) \
+--name az2-lng-bgp \
+--resource-group $rg \
+--bgp-peering-address $az2gwbgp \
+--asn 65002 \
+--output none
+
+#az3bgp
+az network local-gateway create \
+--gateway-ip-address $(az network public-ip show --name az3-vpngw-pip1 --resource-group $rg -o tsv --query "ipAddress" -o tsv) \
+--name az3-lng-bgp \
+--resource-group $rg \
+--bgp-peering-address $az3gwbgp \
+--asn 65003 \
+--output none
+
+#az1
+az network local-gateway create \
+--gateway-ip-address $(az network public-ip show --name az1-vpngw-pip1 --resource-group $rg -o tsv --query "ipAddress" -o tsv) \
+--name az1-lng-static \
+--resource-group $rg \
+--local-address-prefixes $az1natrange \
+--output none
+
+#az2
+az network local-gateway create \
+--gateway-ip-address $(az network public-ip show --name az2-vpngw-pip1 --resource-group $rg -o tsv --query "ipAddress" -o tsv) \
+--name az2-lng-static \
+--resource-group $rg \
+--local-address-prefixes $az2vnetrange \
+--output none
+
+#az3
+az network local-gateway create \
+--gateway-ip-address $(az network public-ip show --name az3-vpngw-pip1 --resource-group $rg -o tsv --query "ipAddress" -o tsv) \
+--name az3-lng-static \
+--resource-group $rg \
+--local-address-prefixes $az3vnetrange \
+--output none
+
+#NAT Rules
+#Egress NAT Rule from az1 to Branches
+az network vnet-gateway nat-rule add \
+--name az1 \
+--type Static \
+--mode EgressSnat \
+--internal-mappings $az1vnetrange \
+--external-mappings $az1natrange \
+--gateway-name az1-vpngw \
+--resource-group $rg \
+--output none
+
+#Ingress NAT Rule from az2 to az1
+az network vnet-gateway nat-rule add \
+--name az2 \
+--type Static \
+--mode IngressSnat \
+--internal-mappings $az2vnetrange \
+--external-mappings $az2natrange \
+--gateway-name az1-vpngw \
+--resource-group $rg \
+--output none
+
+#Ingress NAT Rule from az3 to az1
+az network vnet-gateway nat-rule add \
+--name az3 \
+--type Static \
+--mode IngressSnat \
+--internal-mappings $az3vnetrange \
+--external-mappings $az3natrange \
+--gateway-name az1-vpngw \
+--resource-group $rg \
+--output none
+
+##Create VPN connections
+#Parse NAT rules as variables
+nataz1=$(az network vnet-gateway nat-rule list -g $rg --gateway-name az1-vpngw --query "[?name=='az1'].{id:id}" -o tsv)
+nataz2=$(az network vnet-gateway nat-rule list -g $rg --gateway-name az1-vpngw --query "[?name=='az2'].{id:id}" -o tsv)
+nataz3=$(az network vnet-gateway nat-rule list -g $rg --gateway-name az1-vpngw --query "[?name=='az3'].{id:id}" -o tsv)
+
+## az1 to az2 and az3 and associate NAT Rules
+# az1 to az2
+az network vpn-connection create \
+--name az1-to-az2 \
+--resource-group $rg \
+--vnet-gateway1 az1-vpngw \
+--location $location \
+--shared-key $sharedkey \
+--local-gateway2 az2-lng-bgp \
+--ingress-nat-rule $nataz2 \
+--egress-nat-rule $nataz1 \
+--enable-bgp \
+--output none
+
+# az1 to az3
+az network vpn-connection create \
+--name az1-to-az3 \
+--resource-group $rg \
+--vnet-gateway1 az1-vpngw \
+--location $location \
+--shared-key $sharedkey \
+--local-gateway2 az3-lng-bgp \
+--ingress-nat-rule $nataz3 \
+--egress-nat-rule $nataz1 \
+--enable-bgp \
+--output none
+
+# az2 to az1
+az network vpn-connection create \
+--name az2-to-az1 \
+--resource-group $rg \
+--vnet-gateway1 az2-vpngw \
+--location $location \
+--shared-key $sharedkey \
+--local-gateway2 az1-lng-bgp \
+--enable-bgp \
+--output none
+
+# az3 to az1
+az network vpn-connection create \
+--name az3-to-az1 \
+--resource-group $rg \
+--vnet-gateway1 az3-vpngw \
+--location $location \
+--shared-key $sharedkey \
+--local-gateway2 az1-lng-bgp \
+--output none
+
+# Connectivity test
+# Open serial console on az1-lxvm, az2-lxvm and az3-lxvm
+# On az2-lxvm and az3-lxvm leave the following command running:
+sudo tcpdump -ni any icmp
+# On az1-lxvm run the following commands:
+ping 100.0.2.4 -O -c 5
+ping 100.0.3.4 -O -c 5

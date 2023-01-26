@@ -1,0 +1,58 @@
+{
+  "$schema": "https://schema.management.azure.com/schemas/2019-04-01/deploymentParameters.json#",
+  "contentVersion": "1.0.0.0",
+  "parameters": {
+    "deployHubVPNGateway": {
+      "value": "true"
+    },
+    "deployOnpremisesVPNGateway": {
+      "value": "true"
+    },
+    "location": {
+      "value": "[resourceGroup().location]"
+    },
+    "Azure": {
+      "value": {
+        "name": "az1",
+        "addressSpacePrefix": [
+          "10.1.0.0/16",
+          "100.64.0.0/27"
+        ],
+        "subnet1Prefix": "10.0.1.0/27",
+        "gatewaySubnetPrefix": "100.64.1.0/27",
+        "asn": "65001",
+        "gatewaySku": "VpnGw2",
+        "vpnGatewayGeneration": "Generation2",
+        "lngNatAddressSpacePrefix": "100.0.1.0/24"
+      }
+    },
+    "Onprem1": {
+      "value": {
+        "name": "az2",
+        "addressSpacePrefix": [
+          "10.0.1.0/24",
+          "100.64.2.0/24"
+        ],
+        "subnet1Prefix": "10.0.1.0/27",
+        "gatewaySubnetPrefix": "100.64.2.0/27",
+        "asn": "65002",
+        "gatewaySku": "VpnGw1",
+        "vpnGatewayGeneration": "Generation1"
+      }
+    },
+    "Onprem2": {
+      "value": {
+        "name": "az3",
+        "addressSpacePrefix": [
+          "10.0.1.0/24",
+          "100.64.3.0/24"
+        ],
+        "subnet1Prefix": "10.0.1.0/27",
+        "gatewaySubnetPrefix": "100.64.3.0/27",
+        "asn": "65003",
+        "gatewaySku": "VpnGw1",
+        "vpnGatewayGeneration": "Generation1"
+      }
+    }
+  }
+}
