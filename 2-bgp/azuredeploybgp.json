@@ -8,22 +8,6 @@
         "VmAdminPassword": {
             "type": "secureString"
         },
-        "deployHubVPNGateway": {
-            "type": "string",
-            "defaultValue": "true",
-            "allowedValues": [
-                "true",
-                "false"
-            ]
-        },
-        "deployOnpremisesVPNGateway": {
-            "type": "string",
-            "defaultValue": "true",
-            "allowedValues": [
-                "true",
-                "false"
-            ]
-        },
         "location": {
             "type": "string",
             "metadata": {
@@ -34,36 +18,45 @@
         "Azure": {
             "type": "object",
             "defaultValue": {
-                "name": "azure",
-                "addressSpacePrefix": "10.0.1.0/24",
+                "name": "az1",
+                "addressSpacePrefix": [
+                    "10.0.1.0/24",
+                    "172.16.1.0/24"
+                ],
                 "subnet1Prefix": "10.0.1.0/27",
-                "gatewaySubnetPrefix": "10.0.1.32/27",
-                "asn": "65010",
+                "gatewaySubnetPrefix": "172.16.1.0/27",
+                "asn": "65001",
                 "gatewaySku": "VpnGw2",
                 "vpnGatewayGeneration": "Generation2",
                 "lngNatAddressSpacePrefix": "100.0.1.0/24"
             }
         },
-        "Onprem1": {
+        "AZ2": {
             "type": "object",
             "defaultValue": {
-                "name": "branch1",
-                "addressSpacePrefix": "10.0.1.0/24",
+                "name": "az2",
+                "addressSpacePrefix": [
+                    "10.0.1.0/24",
+                    "172.16.2.0/24"
+                ],
                 "subnet1Prefix": "10.0.1.0/27",
-                "gatewaySubnetPrefix": "10.0.1.32/27",
-                "asn": "65001",
+                "gatewaySubnetPrefix": "172.16.2.0/27",
+                "asn": "65002",
                 "gatewaySku": "VpnGw1",
                 "vpnGatewayGeneration": "Generation1"
             }
         },
-        "Onprem2": {
+        "AZ3": {
             "type": "object",
             "defaultValue": {
-                "name": "branch2",
-                "addressSpacePrefix": "10.0.1.0/24",
+                "name": "az3",
+                "addressSpacePrefix": [
+                    "10.0.1.0/24",
+                    "172.16.3.0/24"
+                ],
                 "subnet1Prefix": "10.0.1.0/27",
-                "gatewaySubnetPrefix": "10.0.1.32/27",
-                "asn": "65002",
+                "gatewaySubnetPrefix": "172.16.3.0/27",
+                "asn": "65003",
                 "gatewaySku": "VpnGw1",
                 "vpnGatewayGeneration": "Generation1"
             }
@@ -82,20 +75,20 @@
             "subnetName": "subnet1",
             "gatewayName": "[concat(parameters('Azure').name,'-vpngw')]",
             "gatewayPublicIPName": "[concat(parameters('Azure').name,'-vpngw-pip')]",
-            "connectionName1": "[concat(parameters('Azure').name,'-to-',concat(parameters('Onprem1').name))]",
-            "connectionName2": "[concat(parameters('Azure').name,'-to-',concat(parameters('Onprem2').name))]"
+            "connectionName1": "[concat(parameters('Azure').name,'-to-',concat(parameters('AZ2').name))]",
+            "connectionName2": "[concat(parameters('Azure').name,'-to-',concat(parameters('AZ3').name))]"
         },
-        "OnPrem1": {
+        "AZ2": {
             "subnetName": "subnet1",
-            "gatewayName": "[concat(parameters('Onprem1').name,'-vpngw')]",
-            "gatewayPublicIPName": "[concat(parameters('Onprem1').name,'-vpngw-pip')]",
-            "connectionName": "[concat(parameters('Onprem1').name,'-to-',concat(parameters('Azure').name))]"
+            "gatewayName": "[concat(parameters('AZ2').name,'-vpngw')]",
+            "gatewayPublicIPName": "[concat(parameters('AZ2').name,'-vpngw-pip')]",
+            "connectionName": "[concat(parameters('AZ2').name,'-to-',concat(parameters('Azure').name))]"
         },
-        "OnPrem2": {
+        "AZ3": {
             "subnetName": "subnet1",
-            "gatewayName": "[concat(parameters('Onprem2').name,'-vpngw')]",
-            "gatewayPublicIPName": "[concat(parameters('Onprem2').name,'-vpngw-pip')]",
-            "connectionName": "[concat(parameters('Onprem2').name,'-to-',concat(parameters('Azure').name))]"
+            "gatewayName": "[concat(parameters('AZ3').name,'-vpngw')]",
+            "gatewayPublicIPName": "[concat(parameters('AZ3').name,'-vpngw-pip')]",
+            "connectionName": "[concat(parameters('AZ3').name,'-to-',concat(parameters('Azure').name))]"
         }
     },
     "resources": [
@@ -121,7 +114,6 @@
             }
         },
         {
-            "condition": "[equals(parameters('deployHubVPNGateway'),'true')]",
             "name": "[concat(parameters('Azure').name,'-vnet')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
@@ -155,8 +147,7 @@
             }
         },
         {
-            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
-            "name": "[concat(parameters('Onprem1').name,'-vnet')]",
+            "name": "[concat(parameters('AZ2').name,'-vnet')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
@@ -170,27 +161,26 @@
                 },
                 "parameters": {
                     "name": {
-                        "value": "[parameters('Onprem1').name]"
+                        "value": "[parameters('AZ2').name]"
                     },
                     "addressSpacePrefix": {
-                        "value": "[parameters('Onprem1').addressSpacePrefix]"
+                        "value": "[parameters('AZ2').addressSpacePrefix]"
                     },
                     "subnetName": {
-                        "value": "[variables('OnPrem1').subnetName]"
+                        "value": "[variables('AZ2').subnetName]"
                     },
                     "subnetPrefix": {
-                        "value": "[parameters('Onprem1').subnet1Prefix]"
+                        "value": "[parameters('AZ2').subnet1Prefix]"
                     },
                     "gatewaySubnetPrefix": {
-                        "value": "[parameters('Onprem1').gatewaySubnetPrefix]"
+                        "value": "[parameters('AZ2').gatewaySubnetPrefix]"
                     }
                 }
 
             }
         },
         {
-            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
-            "name": "[concat(parameters('Onprem2').name,'-vnet')]",
+            "name": "[concat(parameters('AZ3').name,'-vnet')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
@@ -204,26 +194,25 @@
                 },
                 "parameters": {
                     "name": {
-                        "value": "[parameters('Onprem2').name]"
+                        "value": "[parameters('AZ3').name]"
                     },
                     "addressSpacePrefix": {
-                        "value": "[parameters('Onprem2').addressSpacePrefix]"
+                        "value": "[parameters('AZ3').addressSpacePrefix]"
                     },
                     "subnetName": {
-                        "value": "[variables('OnPrem2').subnetName]"
+                        "value": "[variables('AZ3').subnetName]"
                     },
                     "subnetPrefix": {
-                        "value": "[parameters('Onprem2').subnet1Prefix]"
+                        "value": "[parameters('AZ3').subnet1Prefix]"
                     },
                     "gatewaySubnetPrefix": {
-                        "value": "[parameters('Onprem2').gatewaySubnetPrefix]"
+                        "value": "[parameters('AZ3').gatewaySubnetPrefix]"
                     }
                 }
 
             }
         },
         {
-            "condition": "[equals(parameters('deployHubVPNGateway'),'true')]",
             "name": "[variables('Azure').gatewayName]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
@@ -261,12 +250,11 @@
         },
 
         {
-            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
-            "name": "[variables('OnPrem1').gatewayName]",
+            "name": "[variables('AZ2').gatewayName]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem1').name,'-vnet'))]"
+                "[resourceId('Microsoft.Resources/deployments', concat(parameters('AZ2').name,'-vnet'))]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -276,34 +264,33 @@
                 },
                 "parameters": {
                     "gatewayName": {
-                        "value": "[variables('OnPrem1').gatewayName]"
+                        "value": "[variables('AZ2').gatewayName]"
                     },
                     "gatewaySku": {
-                        "value": "[parameters('Onprem1').gatewaySku]"
+                        "value": "[parameters('AZ2').gatewaySku]"
                     },
                     "vpnGatewayGeneration": {
-                        "value": "[parameters('Onprem1').vpnGatewayGeneration]"
+                        "value": "[parameters('AZ2').vpnGatewayGeneration]"
                     },
                     "enableBgp": {
                         "value": "[variables('enableBgp')]"
                     },
                     "asn": {
-                        "value": "[parameters('Onprem1').asn]"
+                        "value": "[parameters('AZ2').asn]"
                     },
                     "vnetName": {
-                        "value": "[concat(parameters('Onprem1').name,'-vnet')]"
+                        "value": "[concat(parameters('AZ2').name,'-vnet')]"
                     }
                 }
 
             }
         },
         {
-            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
-            "name": "[variables('OnPrem2').gatewayName]",
+            "name": "[variables('AZ3').gatewayName]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem2').name,'-vnet'))]"
+                "[resourceId('Microsoft.Resources/deployments', concat(parameters('AZ3').name,'-vnet'))]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -313,22 +300,22 @@
                 },
                 "parameters": {
                     "gatewayName": {
-                        "value": "[variables('OnPrem2').gatewayName]"
+                        "value": "[variables('AZ3').gatewayName]"
                     },
                     "gatewaySku": {
-                        "value": "[parameters('Onprem2').gatewaySku]"
+                        "value": "[parameters('AZ3').gatewaySku]"
                     },
                     "vpnGatewayGeneration": {
-                        "value": "[parameters('Onprem2').vpnGatewayGeneration]"
+                        "value": "[parameters('AZ3').vpnGatewayGeneration]"
                     },
                     "enableBgp": {
                         "value": "[variables('enableBgp')]"
                     },
                     "asn": {
-                        "value": "[parameters('Onprem2').asn]"
+                        "value": "[parameters('AZ3').asn]"
                     },
                     "vnetName": {
-                        "value": "[concat(parameters('Onprem2').name,'-vnet')]"
+                        "value": "[concat(parameters('AZ3').name,'-vnet')]"
                     }
                 }
 
@@ -370,12 +357,11 @@
             }
         },
         {
-            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
-            "name": "[concat(parameters('Onprem1').name,'-vm')]",
+            "name": "[concat(parameters('AZ2').name,'-vm')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem1').name,'-vnet'))]",
+                "[resourceId('Microsoft.Resources/deployments', concat(parameters('AZ2').name,'-vnet'))]",
                 "[resourceId('Microsoft.Resources/deployments', concat(parameters('Azure').name,'-vm'))]"
             ],
             "properties": {
@@ -392,13 +378,13 @@
                         "value": "[parameters('VmAdminPassword')]"
                     },
                     "subnetName": {
-                        "value": "[variables('OnPrem1').subnetName]"
+                        "value": "[variables('AZ2').subnetName]"
                     },
                     "virtualNetworkId": {
-                        "value": "[resourceId('Microsoft.Network/virtualNetworks/', concat(parameters('Onprem1').name, '-vnet'))]"
+                        "value": "[resourceId('Microsoft.Network/virtualNetworks/', concat(parameters('AZ2').name, '-vnet'))]"
                     },
                     "virtualMachineName": {
-                        "value": "[concat(parameters('Onprem1').name,'-lxvm')]"
+                        "value": "[concat(parameters('AZ2').name,'-lxvm')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
@@ -407,13 +393,12 @@
             }
         },
         {
-            "condition": "[equals(parameters('deployOnpremisesVPNGateway'),'true')]",
-            "name": "[concat(parameters('Onprem2').name,'-vm')]",
+            "name": "[concat(parameters('AZ3').name,'-vm')]",
             "type": "Microsoft.Resources/deployments",
             "apiVersion": "2020-10-01",
             "dependsOn": [
-                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem2').name,'-vnet'))]",
-                "[resourceId('Microsoft.Resources/deployments', concat(parameters('Onprem1').name,'-vm'))]"
+                "[resourceId('Microsoft.Resources/deployments', concat(parameters('AZ3').name,'-vnet'))]",
+                "[resourceId('Microsoft.Resources/deployments', concat(parameters('AZ2').name,'-vm'))]"
             ],
             "properties": {
                 "mode": "Incremental",
@@ -429,13 +414,13 @@
                         "value": "[parameters('VmAdminPassword')]"
                     },
                     "subnetName": {
-                        "value": "[variables('OnPrem2').subnetName]"
+                        "value": "[variables('AZ3').subnetName]"
                     },
                     "virtualNetworkId": {
-                        "value": "[resourceId('Microsoft.Network/virtualNetworks/', concat(parameters('Onprem2').name, '-vnet'))]"
+                        "value": "[resourceId('Microsoft.Network/virtualNetworks/', concat(parameters('AZ3').name, '-vnet'))]"
                     },
                     "virtualMachineName": {
-                        "value": "[concat(parameters('Onprem2').name,'-lxvm')]"
+                        "value": "[concat(parameters('AZ3').name,'-lxvm')]"
                     },
                     "location": {
                         "value": "[parameters('location')]"
