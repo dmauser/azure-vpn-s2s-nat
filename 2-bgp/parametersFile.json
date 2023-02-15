@@ -16,7 +16,7 @@
         "name": "az1",
         "addressSpacePrefix": [
           "10.0.1.0/24",
-          "172.16.1.0/24"
+          "172.16.1.0/27"
         ],
         "subnet1Prefix": "10.0.1.0/27",
         "gatewaySubnetPrefix": "172.16.1.0/27",
@@ -31,10 +31,10 @@
         "name": "az2",
         "addressSpacePrefix": [
           "10.0.1.0/24",
-          "172.16.2.0/24"
+          "172.16.1.32/27"
         ],
         "subnet1Prefix": "10.0.1.0/27",
-        "gatewaySubnetPrefix": "172.16.2.0/27",
+        "gatewaySubnetPrefix": "172.16.1.32/27",
         "asn": "65002",
         "gatewaySku": "VpnGw1",
         "vpnGatewayGeneration": "Generation1"
@@ -45,10 +45,10 @@
         "name": "az3",
         "addressSpacePrefix": [
           "10.0.1.0/24",
-          "172.16.3.0/24"
+          "172.16.1.64/27"
         ],
         "subnet1Prefix": "10.0.1.0/27",
-        "gatewaySubnetPrefix": "172.16.3.0/27",
+        "gatewaySubnetPrefix": "172.16.1.64/27",
         "asn": "65003",
         "gatewaySku": "VpnGw1",
         "vpnGatewayGeneration": "Generation1"
