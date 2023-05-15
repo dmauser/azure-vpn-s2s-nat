@@ -151,7 +151,7 @@ az network vnet-gateway nat-rule add \
 
 You can review the generated NAT rules over the Portal by accessing azure-vpngw blade and go to NAT Rules. You should have the following rules listed there:
 
-![NAT Rules](./media/nat-rules-azure-vpngw.png)
+![NAT Rules](./media/vng-s2s-nat-bgp.png)
 
 #### Create VPN connections
 
