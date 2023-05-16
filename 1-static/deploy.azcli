@@ -9,7 +9,7 @@ az account list --query "[?isDefault == \`true\`].{Name:name, IsDefault:isDefaul
 az account set --subscription <Add here SubID or Name> #Add your Subscription ID or Name
 
 #Parameters (change based based on your needs)
-rg=vnet-nat #Set the resource group where your lab got deployed
+rg=lab-vpn-nat #Set the resource group where your lab got deployed
 azurenatrange='100.0.1.0/24' #NAT range used by Azure
 branch1natrange='100.0.2.0/24' #NAT range used by Branch1
 branch2natrange='100.0.3.0/24' #NAT range used by Branch2
@@ -134,7 +134,7 @@ az network vpn-connection create \
 # Connectivity test
 # Open serial console on azure-lxvm, branch1-lxvm and branch2-lxvm
 # On branch1-lxvm and branch2-lxvm leave the following command running:
-sudo tcpdump -ni any icmp
+sudo tcpdump -n icmp
 # On azure-lxvm run the following commands:
 ping 100.0.2.4 -O -c 5
 ping 100.0.3.4 -O -c 5

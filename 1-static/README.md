@@ -64,7 +64,7 @@ Set parameters on the first section below in case you are using a different reso
 
 ```bash
 #Parameters (change based based on your needs)
-rg=vnet-nat #Set the resource group where your lab got deployed
+rg=lab-vpn-nat #Set the resource group where your lab got deployed
 azurenatrange='100.0.1.0/24' #NAT range used by Azure
 branch1natrange='100.0.2.0/24' #NAT range used by Branch1
 branch2natrange='100.0.3.0/24' #NAT range used by Branch2
