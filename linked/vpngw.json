@@ -39,8 +39,8 @@
             "defaultValue": "true",
             "allowedValues": [
                 "true",
-                "false" 
-            ]           
+                "false"
+            ]
         },
         "asn": {
             "type": "string",
@@ -72,16 +72,16 @@
             "apiVersion": "2020-05-01",
             "type": "Microsoft.Network/publicIPAddresses",
             "name": "[variables('PublicIPName1')]",
+            "comments": "This is the public IP for vNet Gateway",
             "location": "[variables('location')]",
-            "comments": "This is the public IP for vNet Gateway 2",
-            "properties": {
-                "publicIPAllocationMethod": "Static"
-            },
             "sku": {
                 "name": "Standard",
                 "tier": "Regional"
             },
-            "zones": []
+            "zones": [],
+            "properties": {
+                "publicIPAllocationMethod": "Static"
+            }
         },
         {
             "apiVersion": "2020-05-01",
