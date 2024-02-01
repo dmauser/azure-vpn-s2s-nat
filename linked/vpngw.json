@@ -81,9 +81,7 @@
                 "name": "Standard",
                 "tier": "Regional"
             },
-            "zones": [
-                "null"
-            ]
+            "zones": []
         },
         {
             "apiVersion": "2020-05-01",
