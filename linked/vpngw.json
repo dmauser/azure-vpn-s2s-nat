@@ -80,7 +80,10 @@
             "sku": {
                 "name": "Standard",
                 "tier": "Regional"
-            }
+            },
+            "zones": [
+                "null"
+            ]
         },
         {
             "apiVersion": "2020-05-01",
