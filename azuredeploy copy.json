@@ -39,7 +39,7 @@
                 "subnet1Prefix": "10.0.1.0/27",
                 "gatewaySubnetPrefix": "10.0.1.32/27",
                 "asn": "65010",
-                "gatewaySku": "VpnGwAZ2",
+                "gatewaySku": "VpnGw2",
                 "vpnGatewayGeneration": "Generation2",
                 "lngNatAddressSpacePrefix": "100.0.1.0/24"
             }
@@ -52,7 +52,7 @@
                 "subnet1Prefix": "10.0.1.0/27",
                 "gatewaySubnetPrefix": "10.0.1.32/27",
                 "asn": "65001",
-                "gatewaySku": "VpnGwAZ1",
+                "gatewaySku": "VpnGw1",
                 "vpnGatewayGeneration": "Generation1"
             }
         },
@@ -64,7 +64,7 @@
                 "subnet1Prefix": "10.0.1.0/27",
                 "gatewaySubnetPrefix": "10.0.1.32/27",
                 "asn": "65002",
-                "gatewaySku": "VpnGwAZ1",
+                "gatewaySku": "VpnGw1",
                 "vpnGatewayGeneration": "Generation1"
             }
 
