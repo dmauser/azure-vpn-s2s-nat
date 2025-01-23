@@ -11,13 +11,13 @@
         },
         "gatewaySku": {
             "type": "string",
-            "defaultValue": "VpnGw1",
+            "defaultValue": "VpnGw1AZ",
             "allowedValues": [
-                "VpnGw1",
-                "VpnGw2",
-                "VpnGw3",
-                "VpnGw4",
-                "VpnGw5"
+                "VpnGw1AZ",
+                "VpnGw2AZ",
+                "VpnGw3AZ",
+                "VpnGw4AZ",
+                "VpnGw5AZ"
             ],
             "metadata": {
                 "description": "The SKU for the VPN Gateway. Cannot be Basic SKU."
@@ -75,16 +75,19 @@
             "comments": "This is the public IP for vNet Gateway",
             "location": "[variables('location')]",
             "sku": {
-                "name": "Standard",
-                "tier": "Regional"
+                "name": "Standard"
             },
-            "zones": [],
+            "zones": [
+                "1",
+                "2",
+                "3"
+            ],
             "properties": {
                 "publicIPAllocationMethod": "Static"
             }
         },
         {
-            "apiVersion": "2020-05-01",
+            "apiVersion": "2024-01-01",
             "type": "Microsoft.Network/virtualNetworkGateways",
             "name": "[parameters('gatewayName')]",
             "location": "[variables('location')]",
